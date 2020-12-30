@@ -75,17 +75,11 @@ PtestM[A_]:=AllTrue[(Diagonal[Map[Reverse,Minors[A,#],{0,1}]]&/@Range[Length[A]]
 
 Ptest[A_]:=(A//Eigenvalues//Min)>=0
 
-Dirac[vector_List]:=(vector[[#]]Ket[IntegerString[(#-1),2,Sqrt[Length[vector]]]])&/@Delete[Range[Length[vector]],Position[vector,0]]//Total
+Dirac[vector_List]:=(vector[[#]]Ket[IntegerString[(#-1),2,Log[2,Length[vector]]]])&/@Delete[Range[Length[vector]],Position[vector,0]]//Total
 
 TwoQBoard[diagonalPCE_List]:=ArrayPlot[ArrayReshape[diagonalPCE,{4,4}]]
 End[];
 EndPackage[]
-
-
-
-
-
-
 
 
 
