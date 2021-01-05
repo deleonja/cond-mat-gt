@@ -32,6 +32,8 @@ Dirac::usage=
 "Dirac[vector] returns vector in Dirac notation in computational basis."
 TwoQBoard::usage=
 "TwoQBoard[diagonalPCE] returns a two qubits board."
+HSInnerP::usage=
+"HSInnerP[A,B] returns the Hilbert-Schmidt inner product between matrices A and B."
 
 Begin["`Private`"]
 Reshuffle[SqMatrix_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[SqMatrix][[1]]],Sqrt[Dimensions[SqMatrix][[1]]]}]&/@SqMatrix,Sqrt[Dimensions[SqMatrix][[1]]]],Sqrt[Dimensions[SqMatrix][[1]]]],1];
@@ -78,6 +80,8 @@ Ptest[A_]:=(A//Eigenvalues//Min)>=0
 Dirac[vector_List]:=(vector[[#]]Ket[IntegerString[(#-1),2,Log[2,Length[vector]]]])&/@Delete[Range[Length[vector]],Position[vector,0]]//Total
 
 TwoQBoard[diagonalPCE_List]:=ArrayPlot[ArrayReshape[diagonalPCE,{4,4}]]
+
+HSInnerP[A_List,B_List]:=Tr[ConjugateTranspose[A].B]
 End[];
 EndPackage[]
 
