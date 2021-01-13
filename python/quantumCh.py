@@ -239,6 +239,7 @@ def HSInnerP(input_a,input_b):
 
     Returns Hilbert-Schimidt inner product.
     '''
+	
 	output=np.trace(np.matmul(np.transpose(np.conjugate(input_a)),input_b))
 	return output
     
