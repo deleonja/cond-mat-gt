@@ -229,17 +229,15 @@ def positivity_test(A):
     positivity = smallest_eig >= 0
     return positivity
 
-def HSInnerP(input_a,input_b):
+def HSInnerP(A, B):
 	'''
-    Compute the Hilbert-Schimidt inner product.
+    Computes the Hilbert-Schimidt inner product.
 
     Input:
-    - A: matrix
-	- B: matrix
+    - A, B: matrices of same dimension
 
-    Returns Hilbert-Schimidt inner product.
+    Returns Hilbert-Schimidt inner product of A and B.
     '''
-	
-	output=np.trace(np.matmul(np.transpose(np.conjugate(input_a)),input_b))
+
+	output = np.trace(np.matmul(np.transpose(np.conjugate(A)),B))
 	return output
-    
