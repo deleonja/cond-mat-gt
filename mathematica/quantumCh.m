@@ -34,6 +34,8 @@ TwoQBoard::usage=
 "TwoQBoard[diagonalPCE] returns a two qubits board."
 HSInnerP::usage=
 "HSInnerP[A,B] returns the Hilbert-Schmidt inner product between matrices A and B."
+KetBra::usage=
+"KetBra[A_] returns ket-bra notation of a matrix in computational basis."
 
 Begin["`Private`"]
 Reshuffle[SqMatrix_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[SqMatrix][[1]]],Sqrt[Dimensions[SqMatrix][[1]]]}]&/@SqMatrix,Sqrt[Dimensions[SqMatrix][[1]]]],Sqrt[Dimensions[SqMatrix][[1]]]],1];
@@ -82,6 +84,8 @@ Dirac[vector_List]:=(vector[[#]]Ket[IntegerString[(#-1),2,Log[2,Length[vector]]]
 TwoQBoard[diagonalPCE_List]:=ArrayPlot[ArrayReshape[diagonalPCE,{4,4}]]
 
 HSInnerP[A_List,B_List]:=Tr[ConjugateTranspose[A].B]
+
+KetBra[A_]:=Flatten[A].(Flatten[Table[Ket[IntegerString[#-1,2,Log[2,Length[A]]]],Length[A]]&/@Range[Length[A]]][[#]].Flatten[Transpose[Table[Bra[IntegerString[#-1,2,Log[2,Length[A]]]],Length[A]]&/@Range[Length[A]]]][[#]]&/@Range[Length[A]^2])
 End[];
 EndPackage[]
 
