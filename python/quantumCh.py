@@ -2,6 +2,82 @@ import numpy as np
 from itertools import product, combinations
 import sys
 
+# Felipe
+def Pauli(indices):
+    '''
+    Recursive function to calculate the tensor product of Pauli matrices.
+    '''
+    # Pauli matrices:
+    s1 = np.array([[0,1],[1,0]])        # sigma_x
+    s2 = np.array([[0,-1j],[1j,0]])     # sigma_y
+    s3 = np.array([[1,0],[0,-1]])       # sigma_z
+
+    # Identity and Pauli matrices in an array
+    sigma = np.array([np.identity(2),s1,s2,s3])
+
+    if len(indices) == 0:
+        return 1
+    else:
+        return np.kron(sigma[indices.pop(0)], Pauli(indices))
+
+def S(N,alpha,n):
+	"""
+	PAULI OPERATORS FUNCTION
+	N: the number of qubits
+	alpha: the Pauli matrix: 1->x, 2->y, 3->z
+	n: label of the qubit
+	"""
+
+	# Pauli basis:
+	sx = np.array([[0,1],[1,0]])
+	sy = np.array([[0,-1],[1,0]])
+	sz = np.array([[1,0],[0,-1]])
+	sid = np.array([[1,0],[0,1]])
+	s0 = np.array([[0,0],[0,0]])
+
+	if alpha == 1: #if we define the x spin operator
+		if n == 0: #if we consider the first site of the chain
+			Sn = np.kron(sx,np.identity(2**(N-1)))
+		else: #for the rest of the chain
+			Sn = np.kron(np.kron(np.identity(2**(n-1)),sx),np.identity(2**(N-n)))
+	elif alpha == 2: #if we define the y spin operator
+		if n == 0: #if we consider the first site of the chain
+			Sn = np.kron(sy,np.identity(2**(N-1)))
+		else: #for the rest of the chain
+			Sn = np.kron(np.kron(np.identity(2**(n-1)),sy),np.identity(2**(N-n)))
+	elif alpha == 3: #if we define the z spin operator
+		if n == 0: #if we consider the first site of the chain
+			Sn = np.kron(sz,np.identity(2**(N-1)))
+		else: #for the rest of the chain
+			Sn = np.kron(np.kron(np.identity(2**(n-1)),sz),np.identity(2**(N-n)))
+	elif alpha == 0:
+		Sn = np.identity(2**N)
+	return Sn
+# aquí termina Felipe
+
+# Alejandro
+def change_of_basis_matrix_P_to_C(n):
+	alpha = [0,1,2,3]
+	R = np.array(list(product(alpha, repeat=(n))))
+
+	# Create a 2D square array to storage in each row every vector of the Pauli basis
+	change_of_basis_M = np.zeros((4**n, 4**n))
+
+	# Actually asign to each row of change_of_basis_M every vector of the Pauli basis
+	for i in range(4**n):
+		dummy = np.identity(2**n)
+		for j in range(n):
+			dummy = dummy @ S(n,R[i][j],j+1)
+		change_of_basis_M[i] = dummy.reshape(4**n)
+
+	# Now that you have each column in every row of the change-of-basis matrix in change_of_basis_M transpose it to get the actual
+	# change-of-basis matrix
+	# M_cb_PaC = np.column_stack(change_of_basis_M)
+	change_of_basis_M = change_of_basis_M.T
+
+	return change_of_basis_M
+# aquí termina Alejandro
+
 def combinations_of_components(n, num_of_corr):
 	rIndices = list(range(4**n-1))
 
@@ -15,7 +91,7 @@ def combinations_of_components(n, num_of_corr):
 			r[i][j+1] = 1
 	return r
 
-
+# Esta función se puede y debe sustituir por np.diag()
 def diagonalMatrix(dim, diagEntries):
 	# Constructs a diagonal square matrix.
 
@@ -51,37 +127,6 @@ def onesAndZeros(oneIndices, listLength):
 
 	return List
 
-
-
-
-'''
-r = R(3, 3)
-
-counter = 0
-
-qubits_positions = np.zeros((3,3))
-
-for i in range(3):
-	for j in range(3):
-		qubits_positions[i][j] = 4**i*(j+1)
-
-for k in range(r.shape[0]):
-	qubits_corr = np.zeros((3,3))
-	norms = np.zeros(3)
-	for i in range(3):
-		for j in range(3):
-			qubits_corr[i][j] = r[k][int(qubits_positions[i][j])]
-		norms[i] = np.dot(qubits_corr[i],qubits_corr[i])
-	for elem in list(product([0,1,2,3], repeat=3))[1:22]:
-		#print(elem)
-		if norms[0] == elem[0] and norms[1] == elem[1] and norms[2] == elem[2]:
-			#print(r[k])
-			counter = counter + 1
-'''
-
-
-# 1 2 3, 4 8 12, 16 32 48
-
 def maps_in_Pauli_basis(n, param, num_of_corr):
     '''
     Constructs, in the Pauli basis, all the posible maps that leave invariant a certain qbit-system's number of components.
@@ -106,61 +151,6 @@ def maps_in_Pauli_basis(n, param, num_of_corr):
 
     # Return all possible maps in the Pauli basis
     return maps_P
-
-def S(N,alpha,n):
-	"""
-	PAULI OPERATORS FUNCTION
-	N: the number of qubits
-	alpha: the Pauli matrix: 1->x, 2->y, 3->z
-	n: label of the qubit
-	"""
-
-	# Pauli basis:
-	sx = np.array([[0,1],[1,0]])
-	sy = np.array([[0,-1],[1,0]])
-	sz = np.array([[1,0],[0,-1]])
-	sid = np.array([[1,0],[0,1]])
-	s0 = np.array([[0,0],[0,0]])
-
-	if alpha == 1: #if we define the x spin operator
-		if n == 0: #if we consider the first site of the chain
-			Sn = np.kron(sx,np.identity(2**(N-1)))
-		else: #for the rest of the chain
-			Sn = np.kron(np.kron(np.identity(2**(n-1)),sx),np.identity(2**(N-n)))
-	elif alpha == 2: #if we define the y spin operator
-		if n == 0: #if we consider the first site of the chain
-			Sn = np.kron(sy,np.identity(2**(N-1)))
-		else: #for the rest of the chain
-			Sn = np.kron(np.kron(np.identity(2**(n-1)),sy),np.identity(2**(N-n)))
-	elif alpha == 3: #if we define the z spin operator
-		if n == 0: #if we consider the first site of the chain
-			Sn = np.kron(sz,np.identity(2**(N-1)))
-		else: #for the rest of the chain
-			Sn = np.kron(np.kron(np.identity(2**(n-1)),sz),np.identity(2**(N-n)))
-	elif alpha == 0:
-		Sn = np.identity(2**N)
-	return Sn
-
-def change_of_basis_matrix_P_to_C(n):
-	alpha = [0,1,2,3]
-	R = np.array(list(product(alpha, repeat=(n))))
-
-	# Create a 2D square array to storage in each row every vector of the Pauli basis
-	change_of_basis_M = np.zeros((4**n, 4**n))
-
-	# Actually asign to each row of change_of_basis_M every vector of the Pauli basis
-	for i in range(4**n):
-		dummy = np.identity(2**n)
-		for j in range(n):
-			dummy = dummy @ S(n,R[i][j],j+1)
-		change_of_basis_M[i] = dummy.reshape(4**n)
-
-	# Now that you have each column in every row of the change-of-basis matrix in change_of_basis_M transpose it to get the actual
-	# change-of-basis matrix
-	# M_cb_PaC = np.column_stack(change_of_basis_M)
-	change_of_basis_M = change_of_basis_M.T
-
-	return change_of_basis_M
 
 def change_of_basis(A, change_of_basis_M):
 	'''

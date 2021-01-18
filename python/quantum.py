@@ -11,14 +11,6 @@
 
 import numpy as np
 
-# Pauli matrices:
-s1 = np.array([[0,1],[1,0]])        # sigma_x
-s2 = np.array([[0,-1j],[1j,0]])     # sigma_y
-s3 = np.array([[1,0],[0,-1]])       # sigma_z
-
-# Array with identity matrix and 3 Pauli matrices
-sigma = np.array([np.identity(2),s1,s2,s3])
-
 # Eigenbasis of sigma_z
 ket0 = np.array([[0],[1]])
 ket1 = np.array([[1],[0]])
@@ -33,6 +25,14 @@ def Pauli(indices):
     Pauli([1,2]) = sigma_x tensor sigma_y
     Pauli([2,3,0]) = sigma_y tensor sigma_z tensor identity
     '''
+    # Pauli matrices:
+    s1 = np.array([[0,1],[1,0]])        # sigma_x
+    s2 = np.array([[0,-1j],[1j,0]])     # sigma_y
+    s3 = np.array([[1,0],[0,-1]])       # sigma_z
+
+    # Array with identity matrix and 3 Pauli matrices
+    sigma = np.array([np.identity(2),s1,s2,s3])
+
     if len(indices) == 0:
         return 1
     else:
