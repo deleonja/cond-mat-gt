@@ -10,7 +10,7 @@
 BeginPackage["quantumJA`"]
 
 Reshuffle::usage=
-"Reshuffle[SqMatrix] reshuffles the matrix SqMatrix."
+"Reshuffle[\[ScriptCapitalE]_List] reshuffles the superoperator of a qubit quantum channel \[ScriptCapitalE]."
 Pauli::usage=
 "Pauli[Indices_List] gives the tensor product of Pauli Matrices with indices in Indices_List."
 ChangeOfBasisMatrix::usage=
@@ -38,7 +38,11 @@ KetBra::usage=
 "KetBra[A_] returns ket-bra notation of a matrix in computational basis."
 
 Begin["`Private`"]
-Reshuffle[SqMatrix_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[SqMatrix][[1]]],Sqrt[Dimensions[SqMatrix][[1]]]}]&/@SqMatrix,Sqrt[Dimensions[SqMatrix][[1]]]],Sqrt[Dimensions[SqMatrix][[1]]]],1];
+Reshuffle[\[ScriptCapitalE]_List]:=Module[{dimSubMatrix,subMatrices},
+dimSubMatrix=Sqrt[Length[\[ScriptCapitalE]]];
+subMatrices=ArrayReshape[#,{dimSubMatrix,dimSubMatrix}]&/@\[ScriptCapitalE];
+ArrayFlatten[Partition[subMatrices,dimSubMatrix]]
+]
 
 Pauli[0]=Pauli[{0}]={{1,0},{0,1}};
 Pauli[1]=Pauli[{1}]={{0,1},{1,0}};
