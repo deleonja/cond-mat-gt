@@ -1,3 +1,4 @@
+b
 import numpy as np
 from itertools import product, combinations
 import sys
