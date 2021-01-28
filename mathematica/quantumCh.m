@@ -13,8 +13,8 @@ Reshuffle::usage=
 "Reshuffle[\[ScriptCapitalE]_List] reshuffles the superoperator of a qubit quantum channel \[ScriptCapitalE]."
 Pauli::usage=
 "Pauli[Indices_List] gives the tensor product of Pauli Matrices with indices in Indices_List."
-ChangeOfBasisMatrix::usage=
-"ChangeOfBasisMatrix[qbitsNum] calculates the change of basis matrix for a qubit-system map from computational to tensor product of Pauli matrices basis."
+PauliToComp::usage=
+"PauliToComp[qubits] calculates the change of basis matrix for a qubit-system map from computational to tensor product of Pauli matrices basis."
 PCE::usage=
 "PCE[diagElements, qubitsNum] calculates the matrix representation of a map in the tensor product of Pauli matrices given the
 diagonal elements of the matrix in computational basis."
@@ -50,13 +50,15 @@ Pauli[2]=Pauli[{2}]={{0,-I},{I,0}};
 Pauli[3]=Pauli[{3}]={{1,0},{0,-1}};
 Pauli[Indices_List]:=KroneckerProduct@@(Pauli/@Indices);
 
-ChangeOfBasisMatrix[qbitsNum_]:=
-Flatten/@(Pauli[#]&/@Tuples[Range[0,3],qbitsNum])//Transpose
+PauliToComp[qubits_Integer]:=Module[{indices},
+indices=Tuples[Range[0,3],qubits];
+Transpose[Map[Flatten[Pauli[#]]&,indices]]
+]
 
 PCE[diagElements_, qubitsNum_]:=
-ChangeOfBasisMatrix[qubitsNum].
+PauliToComp[qubitsNum].
 DiagonalMatrix[diagElements].
-Inverse[ChangeOfBasisMatrix[qubitsNum]]
+Inverse[PauliToComp[qubitsNum]]
 
 CubePositions[diagElPos_]:=
 Position[ArrayReshape[SparseArray[diagElPos->ConstantArray[1,Length[diagElPos]],{64}]//Normal,{4,4,4}],1]-1
